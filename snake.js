@@ -29,6 +29,7 @@ for (let i = 0; i < ROWS; i++) {
 //Drawing the snake based on the coordination
 function drawSnake(snake) {
   //Current snake position
+  getSnakePosition(snake);
   const snakePosition = new Set();
   for (let [t, l] of snake) {
     let position = `${t}_${l}`;
@@ -107,7 +108,6 @@ function move() {
   let head = theSnakeCurrentPosition[theSnakeCurrentPosition.length - 1];
   flushedDirection = currentDirection;
   let nextDirection = currentDirection;
-  console.log(directionQueue);
   while (directionQueue.length > 0) {
     let candidateDirection = directionQueue.shift();
     if (areOpposite(candidateDirection, currentDirection)) {
@@ -117,12 +117,12 @@ function move() {
 
     break;
   }
+  const snakePossition = getSnakePosition(theSnakeCurrentPosition);
 
   currentDirection = nextDirection;
   let nextHead = currentDirection(head);
 
-  if (!isValideHead(nextHead)) {
-    snakeCanvas.style.borderColor = "red";
+  if (!isValideHead(snakePossition, nextHead)) {
     stopGame();
     return;
   }
@@ -148,22 +148,49 @@ function areOpposite(dir1, dir2) {
   return false;
 }
 
+function getSnakePosition(snake) {
+  let snakePosition = new Set();
+  for (let [top, right] of snake) {
+    let position = `${top}_${right}`;
+    snakePosition.add(position);
+  }
+  return snakePosition;
+}
+
+/**
+ * is it hit the vals?
+ * @returns boolean
+ */
+function isValideHead(snake, [top, right]) {
+  if (top < 0 || right < 0) {
+    return false;
+  }
+
+  if (top >= ROWS || right >= COLMS) {
+    return false;
+  }
+  let position = `${top}_${right}`;
+  if (snake.has(position)) {
+    return false;
+  }
+
+  return true;
+}
+
+/**
+ * Stoping the game..
+ */
+function stopGame() {
+  clearInterval(interval);
+  snakeCanvas.style.borderColor = "red";
+}
+
 function dump(queue) {
   const debug = document.getElementById("debug");
   debug.innerText = queue.map((fn) => fn.name).join(", ");
 }
 
-function isValideHead([top, right]) {
-  if (top >= ROWS || right >= COLMS) {
-    return false;
-  }
-  return true;
-}
-
-function stopGame() {
-  clearInterval(interval);
-}
-
+//Draw the snaakkkke ssss...
 drawSnake(theSnakeCurrentPosition);
 let interval = setInterval(() => {
   move();

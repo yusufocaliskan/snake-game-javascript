@@ -12,8 +12,8 @@
         height: 300px;
       }
       * {
-        font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
-          "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+        font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+          "Lucida Sans", Arial, sans-serif;
         box-sizing: border-box;
       }
 
@@ -22,6 +22,8 @@
         color: rgb(221, 56, 34);
       }
       button {
+        font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+          "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
         margin-right: 5px;
         background-color: rgb(16, 151, 16);
         border: 2px solid green;
@@ -50,7 +52,10 @@
   </head>
 
   <body>
-    <h2>🐍 Mar/Snake!</h2>
+    <h2>
+      <div style="font-size: 50px">🐍</div>
+      <div>Maar/Snake!</div>
+    </h2>
     <div id="canvas"></div>
     <div id="game-controllers">
       <button>🚀 Start</button>
