@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Marr! 🐍</title>
+    <style>
+      #canvas {
+        border: 5px solid #333;
+        border-radius: 2px;
+        position: relative;
+        box-sizing: content-box;
+        width: 500px;
+        height: 300px;
+      }
+      * {
+        font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+          "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+        box-sizing: border-box;
+      }
+
+      h2 {
+        text-align: center;
+        color: rgb(221, 56, 34);
+      }
+      button {
+        margin-right: 5px;
+        background-color: rgb(16, 151, 16);
+        border: 2px solid green;
+        border-bottom: 5px solid green;
+        border-radius: 4px;
+        color: wheat;
+        cursor: pointer;
+      }
+      button:is(:hover, :visite) {
+        background-color: rgb(41, 184, 41);
+        border-color: rgb(27, 150, 27);
+      }
+      button:is(:active) {
+        background-color: rgb(13, 136, 13);
+        border-color: rgb(29, 106, 29);
+      }
+      #game-controllers {
+        margin-top: 10px;
+        text-align: center;
+      }
+      #debug {
+        font-size: 16px;
+        margin-top: 10;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h2>🐍 Mar/Snake!</h2>
+    <div id="canvas"></div>
+    <div id="game-controllers">
+      <button>🚀 Start</button>
+      <button>💥 Restart</button>
+      <button>🔢 Stats</button>
+    </div>
+    <div id="debug"></div>
+  </body>
+
+  <script src="snake.js"></script>
+</html>
