@@ -41,9 +41,9 @@ function drawSnake(snake, food) {
   //Draw it
   for (let i = 0; i < ROWS; i++) {
     for (let j = 0; j < COLMS; j++) {
-      let position = `${i}_${j}`;
+      let position = getKey([i, j]);
       const cell = cells.get(position);
-      let foodPosition = `${currentFood[0]}_${currentFood[1]}`;
+      let foodPosition = getKey(currentFood);
 
       cell.style.background =
         foodPosition == position || snakePosition.has(position)
@@ -63,7 +63,7 @@ const theSnakeCurrentPosition = [
   [0, 5],
 ];
 
-let currentFood = [4, 20];
+let currentFood = createNewFoodPosition();
 
 //Controllls
 let moveUp = ([t, r]) => [t - 1, r];
@@ -112,36 +112,37 @@ document.addEventListener("keydown", (e) => {
 
 //Moving the snake
 function move() {
-  theSnakeCurrentPosition.shift();
-
   let head = theSnakeCurrentPosition[theSnakeCurrentPosition.length - 1];
   flushedDirection = currentDirection;
   let nextDirection = currentDirection;
   while (directionQueue.length > 0) {
     let candidateDirection = directionQueue.shift();
 
-    if (areOpposite(candidateDirection, currentDirection)) {
-      continue;
+    if (!areOpposite(candidateDirection, currentDirection)) {
+      nextDirection = candidateDirection;
+      break;
     }
-
-    nextDirection = candidateDirection;
-
-    break;
   }
-  const snakePossition = getSnakePosition(theSnakeCurrentPosition);
 
+  const snakePossition = getSnakePosition(theSnakeCurrentPosition);
   currentDirection = nextDirection;
   let nextHead = currentDirection(head);
 
   //Food eat by the snake!
   if (getKey(nextHead) === getKey(currentFood)) {
     currentFood = createNewFoodPosition();
-
+    console.log(currentFood);
     score++;
-    const tail = createTail(theSnakeCurrentPosition);
-    theSnakeCurrentPosition.push(tail);
+    //Create tail
+    // const tail = createTail(theSnakeCurrentPosition);
+    // theSnakeCurrentPosition.push(tail);
     updateScore();
+  } else {
+    //Let it to be created a tail.
+    theSnakeCurrentPosition.shift();
   }
+
+  //is head the wall or itself?
   if (!isValideHead(snakePossition, nextHead)) {
     stopGame();
     return;
