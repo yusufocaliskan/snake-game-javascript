@@ -10,6 +10,7 @@
         box-sizing: content-box;
         width: 500px;
         height: 300px;
+        margin: 0 auto;
       }
       * {
         font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
@@ -20,6 +21,10 @@
       h2 {
         text-align: center;
         color: rgb(221, 56, 34);
+      }
+      #game-controllers {
+        margin-top: 20px;
+        text-align: center;
       }
       button {
         font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
@@ -40,13 +45,15 @@
         background-color: rgb(13, 136, 13);
         border-color: rgb(29, 106, 29);
       }
-      #game-controllers {
-        margin-top: 10px;
-        text-align: center;
-      }
+
       #debug {
         font-size: 16px;
         margin-top: 10;
+      }
+      #stats ul {
+        list-style: none;
+        margin-left: 0;
+        padding-left: 10;
       }
     </style>
   </head>
@@ -56,6 +63,11 @@
       <div style="font-size: 50px">🐍</div>
       <div>Maar/Snake!</div>
     </h2>
+    <div id="stats">
+      <ul>
+        <li class="score">Score:<span></span></li>
+      </ul>
+    </div>
     <div id="canvas"></div>
     <div id="game-controllers">
       <button>🚀 Start</button>

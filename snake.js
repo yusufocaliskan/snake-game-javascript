@@ -2,9 +2,11 @@
 const ROWS = 30;
 const COLMS = 50;
 const SIZE = 10;
-
 let snakeCanvas = document.getElementById("canvas");
 let cells = new Map();
+
+//GAME STATS
+let score = 0;
 
 //Create the cells
 for (let i = 0; i < ROWS; i++) {
@@ -12,7 +14,7 @@ for (let i = 0; i < ROWS; i++) {
     let cell = document.createElement("div");
     cell.style.width = SIZE + "px";
     cell.style.height = SIZE + "px";
-    cell.style.border = "1px solid #aaa";
+    cell.style.border = "1px solid rgb(115, 202, 115)";
     cell.style.position = "absolute";
     cell.style.top = `${i * SIZE}px`;
     cell.style.left = `${j * SIZE}px`;
@@ -27,9 +29,9 @@ for (let i = 0; i < ROWS; i++) {
 }
 
 //Drawing the snake based on the coordination
-function drawSnake(snake) {
+function drawSnake(snake, food) {
   //Current snake position
-  getSnakePosition(snake);
+  //getSnakePosition(snake);
   const snakePosition = new Set();
   for (let [t, l] of snake) {
     let position = `${t}_${l}`;
@@ -41,7 +43,12 @@ function drawSnake(snake) {
     for (let j = 0; j < COLMS; j++) {
       let position = `${i}_${j}`;
       const cell = cells.get(position);
-      cell.style.background = snakePosition.has(position) ? "black" : null;
+      let foodPosition = `${currentFood[0]}_${currentFood[1]}`;
+
+      cell.style.background =
+        foodPosition == position || snakePosition.has(position)
+          ? "black"
+          : null;
     }
   }
 }
@@ -55,6 +62,8 @@ const theSnakeCurrentPosition = [
   [0, 4],
   [0, 5],
 ];
+
+let currentFood = [4, 20];
 
 //Controllls
 let moveUp = ([t, r]) => [t - 1, r];
@@ -110,9 +119,11 @@ function move() {
   let nextDirection = currentDirection;
   while (directionQueue.length > 0) {
     let candidateDirection = directionQueue.shift();
+
     if (areOpposite(candidateDirection, currentDirection)) {
       continue;
     }
+
     nextDirection = candidateDirection;
 
     break;
@@ -122,13 +133,35 @@ function move() {
   currentDirection = nextDirection;
   let nextHead = currentDirection(head);
 
+  //Food eat by the snake!
+  if (getKey(nextHead) === getKey(currentFood)) {
+    currentFood = createNewFoodPosition();
+
+    score++;
+    const tail = createTail(theSnakeCurrentPosition);
+    theSnakeCurrentPosition.push(tail);
+    updateScore();
+  }
   if (!isValideHead(snakePossition, nextHead)) {
     stopGame();
     return;
   }
+
   theSnakeCurrentPosition.push(nextHead);
   drawSnake(theSnakeCurrentPosition);
   //dump(directionQueue);
+}
+
+function createTail(snake) {
+  const first = snake[0];
+
+  const top = first[0] - 1;
+  const left = first[1] - 1;
+  return [top, left];
+}
+
+function getKey([t, l]) {
+  return `${t}_${l}`;
 }
 
 function areOpposite(dir1, dir2) {
@@ -177,12 +210,25 @@ function isValideHead(snake, [top, right]) {
   return true;
 }
 
+function createNewFoodPosition() {
+  const top = Math.floor(Math.random() * ROWS);
+  const left = Math.floor(Math.random() * COLMS);
+  return [top, left];
+}
+
 /**
  * Stoping the game..
  */
 function stopGame() {
   clearInterval(interval);
   snakeCanvas.style.borderColor = "red";
+  updateScore();
+  score = 0;
+}
+
+function updateScore() {
+  const scoreElement = document.querySelector(".score span");
+  scoreElement.innerText = score;
 }
 
 function dump(queue) {
