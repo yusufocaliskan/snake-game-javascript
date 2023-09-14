@@ -4,6 +4,19 @@ const COLMS = 50;
 const SIZE = 10;
 let snakeCanvas = document.getElementById("canvas");
 let cells = new Map();
+let interval;
+let isFailed = false;
+let isPlaying = false;
+
+//buttons
+const playButton = document.querySelector(".play");
+
+const pauseButton = document.querySelector(".pause");
+const resumeButton = document.querySelector(".resume");
+
+//Draw the snake and food
+let theSnakeCurrentPosition = initialSneakPosition();
+let currentFood = createNewFoodPosition();
 
 //GAME STATS
 let score = 0;
@@ -53,18 +66,6 @@ function drawSnake(snake, food) {
   }
 }
 
-//Draw the snake
-const theSnakeCurrentPosition = [
-  [0, 0],
-  [0, 1],
-  [0, 2],
-  [0, 3],
-  [0, 4],
-  [0, 5],
-];
-
-let currentFood = createNewFoodPosition();
-
 //Controllls
 let moveUp = ([t, r]) => [t - 1, r];
 let moveDown = ([t, r]) => [t + 1, r];
@@ -107,7 +108,21 @@ document.addEventListener("keydown", (e) => {
       }
       break;
   }
-  // dump(directionQueue);
+  //dump(directionQueue);
+});
+
+const playButtons = document.querySelectorAll(".play");
+for (let p = 0; p < playButtons.length; p++) {
+  playButtons[p].addEventListener("click", () => {
+    play();
+  });
+}
+
+pauseButton.addEventListener("click", () => {
+  if (isPlaying) pauseGame();
+});
+resumeButton.addEventListener("click", () => {
+  if (!isPlaying) resumeGame();
 });
 
 //Moving the snake
@@ -133,6 +148,7 @@ function move() {
     currentFood = createNewFoodPosition();
     console.log(currentFood);
     score++;
+
     //Create tail
     // const tail = createTail(theSnakeCurrentPosition);
     // theSnakeCurrentPosition.push(tail);
@@ -144,6 +160,7 @@ function move() {
 
   //is head the wall or itself?
   if (!isValideHead(snakePossition, nextHead)) {
+    showResult();
     stopGame();
     return;
   }
@@ -182,6 +199,11 @@ function areOpposite(dir1, dir2) {
   return false;
 }
 
+/**
+ * create new snake position
+ * @param {*} snake sanake coordinate
+ * @returns set
+ */
 function getSnakePosition(snake) {
   let snakePosition = new Set();
   for (let [top, right] of snake) {
@@ -211,6 +233,10 @@ function isValideHead(snake, [top, right]) {
   return true;
 }
 
+/**
+ * produce coordinate for the food
+ * @returns array
+ */
 function createNewFoodPosition() {
   const top = Math.floor(Math.random() * ROWS);
   const left = Math.floor(Math.random() * COLMS);
@@ -218,27 +244,139 @@ function createNewFoodPosition() {
 }
 
 /**
+ * initial snake poisition
+ * @returns array
+ */
+function initialSneakPosition() {
+  return [
+    [0, 0],
+    [0, 1],
+    [0, 2],
+    [0, 3],
+    [0, 4],
+    [0, 5],
+  ];
+}
+
+/**
+ * Starts a new game
+ */
+function startGame() {
+  playButton;
+  isPlaying = true;
+  snakeCanvas.style.borderColor = "black";
+  score = 0;
+  theSnakeCurrentPosition = initialSneakPosition();
+  currentDirection = moveRight;
+  currentFood = createNewFoodPosition();
+  directionQueue = [];
+  drawSnake(theSnakeCurrentPosition);
+  interval = setInterval(() => {
+    move();
+  }, 200);
+}
+/**
+ * Pauses the playing game
+ */
+function pauseGame() {
+  isPlaying = false;
+  clearInterval(interval);
+  resumeButton.style.display = "block";
+  pauseButton.style.display = "none";
+}
+
+/**
+ * Resumes the paused game
+ */
+function resumeGame() {
+  isPlaying = true;
+  resumeButton.style.display = "none";
+  pauseButton.style.display = "block";
+  interval = setInterval(() => {
+    move();
+  }, 80);
+}
+
+/**
  * Stoping the game..
  */
 function stopGame() {
+  isPlaying = false;
   clearInterval(interval);
-  snakeCanvas.style.borderColor = "red";
   updateScore();
+  saveTheBestScore();
   score = 0;
+  snakeCanvas.style.borderColor = "red";
 }
 
+/**
+ * Start the game
+ */
+function play() {
+  stopGame();
+  hideResult();
+
+  startGame();
+}
+
+/**
+ * Updates the score
+ */
 function updateScore() {
   const scoreElement = document.querySelector(".score span");
   scoreElement.innerText = score;
 }
 
+/**
+ * Show the result
+ */
+function showResult() {
+  const overlay = document.getElementById("overlay");
+  const controllers = document.getElementById("game-controllers");
+  overlay.style.display = "flex";
+  controllers.style.display = "none";
+  snakeCanvas.style.borderColor = "yellow";
+}
+
+/**
+ * Hides the result
+ */
+function hideResult() {
+  const overlay = document.getElementById("overlay");
+  const controllers = document.getElementById("game-controllers");
+  overlay.style.display = "none";
+  controllers.style.display = "block";
+}
+
+/**
+ * Save last score
+ */
+function saveTheBestScore() {
+  const bestElement = document.getElementById("best");
+
+  const lastBestScore = getBestScore();
+  if (lastBestScore < score) {
+    localStorage.setItem("best", JSON.stringify(score));
+  }
+  bestElement.querySelector("span").innerText = getBestScore();
+}
+
+/**
+ * Last score
+ * @returns int
+ */
+function getBestScore() {
+  return JSON.parse(localStorage.getItem("best"));
+}
+
+/**
+ * debuging
+ * @param {*} queue functions
+ */
 function dump(queue) {
   const debug = document.getElementById("debug");
   debug.innerText = queue.map((fn) => fn.name).join(", ");
 }
 
 //Draw the snaakkkke ssss...
-drawSnake(theSnakeCurrentPosition);
-let interval = setInterval(() => {
-  move();
-}, 100);
+startGame();

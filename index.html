@@ -23,8 +23,17 @@
         color: rgb(221, 56, 34);
       }
       #game-controllers {
-        margin-top: 20px;
+        margin-top: 10px;
         text-align: center;
+        display: flex;
+        justify-content: center;
+      }
+      #game-controllers ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        display: flex;
+        flex-direction: row;
       }
       button {
         font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
@@ -55,6 +64,21 @@
         margin-left: 0;
         padding-left: 10;
       }
+      #overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 999;
+        background-color: rgb(249, 196, 64);
+        flex: 1;
+        display: none;
+        width: 100%;
+        height: 100%;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+      }
     </style>
   </head>
 
@@ -64,15 +88,29 @@
       <div>Maar/Snake!</div>
     </h2>
     <div id="stats">
-      <ul>
-        <li class="score">Score:<span></span></li>
-      </ul>
+      <ul></ul>
     </div>
-    <div id="canvas"></div>
+    <div id="canvas">
+      <div id="overlay">
+        <h1 style="margin: 0; padding: 0; font-size: 54px">🐍</h1>
+        <div style="display: flex; flex-direction: row">
+          <h2 style="margin-right: 14px">
+            <div class="score">Score: <span>0</span></div>
+          </h2>
+          <h2>
+            <div id="best">Best: <span>0</span></div>
+          </h2>
+        </div>
+        <button class="play">🚀 Play</button>
+      </div>
+    </div>
     <div id="game-controllers">
-      <button>🚀 Start</button>
-      <button>💥 Restart</button>
-      <button>🔢 Stats</button>
+      <ul>
+        <li><button class="play">🚀 Play</button></li>
+        <li><button class="pause">🚀 pause</button></li>
+        <li><button style="display: none" class="resume">🚀 resume</button></li>
+        <li><button>💥 Stats</button></li>
+      </ul>
     </div>
     <div id="debug"></div>
   </body>
